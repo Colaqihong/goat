@@ -25,4 +25,67 @@ button:active { transform: scale(0.95); }
     <div class="word">MONKEY</div>
     
     <div class="image-box">
-        <img src="
+        <img src="https://upload.wikimedia.org/wikipedia/commons/4/43/Macaque_India_4.jpg" alt="Monkey">
+    </div>
+
+    <div class="trace-area">
+        <div class="trace-guide">MONKEY</div>
+        <canvas id="traceCanvas" width="420" height="100"></canvas>
+    </div>
+    
+    <button class="check-btn" onclick="checkWriting()">✔ Check</button>
+    <button class="clear-btn" onclick="clearCanvas()">✖ Clear</button>
+    
+    <div id="result" class="result"></div>
+</div>
+
+<script>
+    const canvas = document.getElementById("traceCanvas");
+    const ctx = canvas.getContext("2d");
+    let drawing=false, totalLength=0, lastX=0, lastY=0;
+    ctx.lineWidth=4; ctx.lineCap="round"; ctx.strokeStyle="#333";
+    
+    function drawLine(x,y){ 
+        let dx = x - lastX; 
+        let dy = y - lastY; 
+        totalLength += Math.sqrt(dx*dx + dy*dy); 
+        ctx.lineTo(x,y); 
+        ctx.stroke(); 
+        lastX = x; 
+        lastY = y; 
+    }
+    
+    canvas.addEventListener("mousedown", e=>{ drawing=true; lastX=e.offsetX; lastY=e.offsetY; ctx.beginPath(); ctx.moveTo(lastX,lastY); });
+    canvas.addEventListener("mousemove", e=>{ if(drawing) drawLine(e.offsetX,e.offsetY); });
+    canvas.addEventListener("mouseup", () => drawing=false);
+    canvas.addEventListener("mouseleave", () => drawing=false);
+    
+    canvas.addEventListener("touchstart", e=>{ const touch=e.touches[0]; const rect=canvas.getBoundingClientRect(); drawing=true; lastX=touch.clientX-rect.left; lastY=touch.clientY-rect.top; ctx.beginPath(); ctx.moveTo(lastX,lastY); }, {passive: false});
+    canvas.addEventListener("touchmove", e=>{ if(!drawing) return; e.preventDefault(); const touch=e.touches[0]; const rect=canvas.getBoundingClientRect(); drawLine(touch.clientX-rect.left,touch.clientY-rect.top); }, {passive: false});
+    canvas.addEventListener("touchend", () => drawing=false);
+    canvas.addEventListener("touchcancel", () => drawing=false);
+    
+    function clearCanvas(){ ctx.clearRect(0,0,canvas.width,canvas.height); totalLength=0; document.getElementById("result").innerText=""; }
+    
+    // 如果你有 button-37a.mp3 和 beep-03.mp3，把它们和这个 HTML 文件放在同一个文件夹里就会有声音
+    const successAudio = new Audio('button-37a.mp3'); 
+    const failAudio = new Audio('beep-03.mp3'); 
+    function playSuccessSound(){ successAudio.currentTime=0; successAudio.play().catch(e=>console.log("Playback failed:", e)); }
+    function playFailSound(){ failAudio.currentTime=0; failAudio.play().catch(e=>console.log("Playback failed:", e)); }
+    
+    function checkWriting(){
+        const result=document.getElementById("result");
+        // MONKEY 是 6 个字母，把判定过关的长度提高到了 1300
+        if(totalLength > 1300){
+            result.innerHTML="Well done! 🎉";
+            result.style.color="green";
+            playSuccessSound();
+        } else {
+            result.innerHTML="Try again 😢";
+            result.style.color="red";
+            playFailSound();
+        }
+    }
+</script>
+</body>
+</html>
