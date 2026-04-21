@@ -22,7 +22,7 @@ button { padding:12px 20px; margin:10px; border-radius:8px; border:none; cursor:
 <h1>Writing Practice 🐍</h1>
 <div class="word">SNAKE</div>
 <div class="image-box">
-<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/Coast_Garter_Snake.jpg/640px-Coast_Garter_Snake.jpg" alt="Snake">
+<img src="" alt="Snake">
 </div>
 <div class="trace-area">
 <div class="trace-guide">SNAKE</div>
@@ -53,8 +53,7 @@ function playSuccessSound(){ successAudio.currentTime=0; successAudio.play().cat
 function playFailSound(){ failAudio.currentTime=0; failAudio.play().catch(e=>console.log("Playback failed:", e)); }
 function checkWriting(){
     const result=document.getElementById("result");
-    // 因为 SNAKE 有 5 个字母，稍微调高了判定要求的长度
-    if(totalLength>1100){
+    if(totalLength>800){
         result.innerHTML="Well done! 🎉";
         result.style.color="green";
         playSuccessSound();
